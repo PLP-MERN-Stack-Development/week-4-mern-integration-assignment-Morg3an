@@ -41,14 +41,14 @@ api.interceptors.response.use(
 // Post API services
 export const postService = {
   // Get all posts with optional pagination and filters
-  getAllPosts: async (page = 1, limit = 10, category = null) => {
+  getAllPosts: async (page = 1, limit = 10, category = null, search = '') => {
     let url = `/posts?page=${page}&limit=${limit}`;
-    if (category) {
-      url += `&category=${category}`;
-    }
+    if (category) url += `&category=${category}`;
+    if (search) url += `&search=${search}`;
     const response = await api.get(url);
     return response.data;
   },
+
 
   // Get a single post by ID or slug
   getPost: async (idOrSlug) => {
@@ -58,9 +58,14 @@ export const postService = {
 
   // Create a new post
   createPost: async (postData) => {
-    const response = await api.post('/posts', postData);
+    const response = await api.post('/posts', postData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
     return response.data;
   },
+
 
   // Update an existing post
   updatePost: async (id, postData) => {
@@ -80,11 +85,13 @@ export const postService = {
     return response.data;
   },
 
+  /*
   // Search posts
   searchPosts: async (query) => {
     const response = await api.get(`/posts/search?q=${query}`);
     return response.data;
   },
+  */
 };
 
 // Category API services

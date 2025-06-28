@@ -20,7 +20,7 @@ const PostSchema = new mongoose.Schema(
     },
     slug: {
       type: String,
-      required: true,
+      required: false,
       unique: true,
     },
     excerpt: {
@@ -71,12 +71,12 @@ PostSchema.pre('save', function (next) {
   if (!this.isModified('title')) {
     return next();
   }
-  
+
   this.slug = this.title
     .toLowerCase()
     .replace(/[^\w ]+/g, '')
     .replace(/ +/g, '-');
-    
+
   next();
 });
 
