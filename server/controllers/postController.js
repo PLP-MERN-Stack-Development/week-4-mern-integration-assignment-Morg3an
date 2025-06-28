@@ -13,6 +13,13 @@ exports.getPosts = asyncHandler(async (req, res) => {
     if (req.query.category) {
         query.category = req.query.category;
     }
+
+    if (req.query.status === 'published') {
+        query.isPublished = true;
+    } else if (req.query.status === 'draft') {
+        query.isPublished = false;
+    }
+
     const posts = await Post.find(query).populate('author').populate('category');
     res.json(posts);
 });
@@ -20,13 +27,18 @@ exports.getPosts = asyncHandler(async (req, res) => {
 // @desc    Get single post
 // @route   GET /api/posts/\:id
 exports.getPostById = asyncHandler(async (req, res) => {
-    const post = await Post.findById(req.params.id).populate('author').populate('category');
+    const post = await Post.findById(req.params.id)
+        .populate('author')
+        .populate('category');
+
     if (!post) {
         res.status(404);
         throw new Error('Post not found');
     }
+
     res.json(post);
 });
+
 
 // @desc    Create a new post
 // @route   POST /api/posts

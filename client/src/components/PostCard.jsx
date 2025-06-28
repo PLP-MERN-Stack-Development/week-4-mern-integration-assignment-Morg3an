@@ -1,4 +1,3 @@
-// components/PostCard.jsx
 import { Link } from 'react-router-dom';
 import { BASE_URL } from '../services/config';
 
@@ -16,6 +15,9 @@ const PostCard = ({ post }) => (
             By {post.author?.name || 'Unknown'} | {new Date(post.createdAt).toLocaleDateString()}
         </p>
         <p className="text-gray-700 mb-4">{post.excerpt || post.content.slice(0, 120)}...</p>
+        <p className="text-xs text-gray-500 mb-2">
+            Status: {post.isPublished ? 'Published' : 'Draft'}
+        </p>
         <Link to={`/posts/${post._id}`} className="text-blue-600 hover:underline">
             Read More →
         </Link>

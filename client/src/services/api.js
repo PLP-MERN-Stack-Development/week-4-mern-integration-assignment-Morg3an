@@ -41,13 +41,15 @@ api.interceptors.response.use(
 // Post API services
 export const postService = {
   // Get all posts with optional pagination and filters
-  getAllPosts: async (page = 1, limit = 10, category = null, search = '') => {
+  getAllPosts: async (page = 1, limit = 10, category = null, search = '', status = '') => {
     let url = `/posts?page=${page}&limit=${limit}`;
     if (category) url += `&category=${category}`;
     if (search) url += `&search=${search}`;
+    if (status) url += `&status=${status}`;
     const response = await api.get(url);
     return response.data;
   },
+
 
 
   // Get a single post by ID or slug

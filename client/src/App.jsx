@@ -6,6 +6,7 @@ import AllPosts from './pages/AllPosts';
 import MyPosts from './pages/MyPosts';
 import PostDetails from './pages/PostDetails';
 import CreatePost from './pages/CreatePost';
+import EditPost from './pages/EditPost';
 import NotFound from './pages/NotFound';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -20,6 +21,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/posts/:id" element={<PostDetails />} />
+          <Route path="/posts/:id/edit" element={<EditPost />} />
           <Route path="/posts" element={<AllPosts />} />
           <Route path="/my-posts" element={<ProtectedRoute><MyPosts /></ProtectedRoute>} />
           <Route

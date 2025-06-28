@@ -1,14 +1,16 @@
 import { useEffect, useState, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { postService } from '../services/api';
 import { BASE_URL } from '../services/config';
 import { AuthContext } from '../context/AuthContext';
 
 const PostDetails = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
+    const { user } = useContext(AuthContext);
+
     const [post, setPost] = useState(null);
     const [error, setError] = useState('');
-    const { user } = useContext(AuthContext);
     const [commentText, setCommentText] = useState('');
     const [submitting, setSubmitting] = useState(false);
 
@@ -22,14 +24,6 @@ const PostDetails = () => {
     };
 
     useEffect(() => {
-        const fetchPost = async () => {
-            try {
-                const data = await postService.getPost(id);
-                setPost(data);
-            } catch (err) {
-                setError(err.response?.data?.error || 'Failed to fetch post');
-            }
-        };
         fetchPost();
     }, [id]);
 
@@ -41,11 +35,21 @@ const PostDetails = () => {
         try {
             await postService.addComment(post._id, { content: commentText });
             setCommentText('');
-            await fetchPost(); // Refresh post to show the new comment
+            await fetchPost(); // Refresh post to show new comment
         } catch (err) {
             alert('Failed to post comment');
         } finally {
             setSubmitting(false);
+        }
+    };
+
+    const handleDelete = async () => {
+        if (!confirm('Are you sure you want to delete this post?')) return;
+        try {
+            await postService.deletePost(post._id);
+            navigate('/posts');
+        } catch (err) {
+            setError(err.response?.data?.error || 'Failed to delete post');
         }
     };
 
@@ -58,7 +62,30 @@ const PostDetails = () => {
             <p className="text-sm text-gray-500 mb-4">
                 By {post.author?.name || 'Unknown'} | {new Date(post.createdAt).toLocaleDateString()}
             </p>
+            <p className="text-xs text-gray-500 mb-4 italic">
+                Status: {post.isPublished ? 'Published' : 'Draft'}
+            </p>
 
+
+            {/* Edit/Delete Buttons (Author Only) */}
+            {user?._id === post.author?._id && (
+                <div className="flex gap-2 mb-4">
+                    <button
+                        onClick={() => navigate(`/posts/${post._id}/edit`)}
+                        className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded"
+                    >
+                        Edit
+                    </button>
+                    <button
+                        onClick={handleDelete}
+                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+                    >
+                        Delete
+                    </button>
+                </div>
+            )}
+
+            {/* Featured Image */}
             {post.featuredImage && (
                 <img
                     src={`${BASE_URL}${post.featuredImage}`}
